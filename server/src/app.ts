@@ -5,27 +5,34 @@ import morgan from 'morgan'
 import dotenv from 'dotenv'
 import { ApolloServer } from '@apollo/server'
 import { startStandaloneServer } from '@apollo/server/standalone';
-import {schema} from "./graphql/schema/schema.js"
+import { schema } from "./graphql/schema/schema.js"
+import connectDB from './db/index.js'
+import { User } from './models/user.model.js'
+import { getAllUsers } from './controllers/user.js'
 dotenv.config({ path: './.env', });
 
 export const envMode = process.env.NODE_ENV?.trim() || 'DEVELOPMENT';
 const port = Number(process.env.PORT) || 3000;
-
+connectDB()
+  .catch((err) => {
+    console.log('MONGODB CONNECTION FAILED', err);
+  })
 const server = new ApolloServer({
   typeDefs: schema,
   resolvers: {
     Query: {
       hello: () => "hello world",
-      hi: () => "hi there"
-    }
-  }
-})
+      hi: () => "hi there",
+      users: getAllUsers,
+    },
+  },
+});
 startStandaloneServer(server, {
   listen: {
     port,
   }
 }).then(() => {
-  console.log('Server is working on Port:' + port + ' in ' + envMode + ' Mode.');
+  console.log('Server is working on  Port:' + port + ' in ' + envMode + ' Mode.');
 
 }).catch(e => {
   console.log("error: ", e);
