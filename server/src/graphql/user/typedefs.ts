@@ -4,7 +4,7 @@ export const typeDefs = `#graphql
             say(name: String): String
         }
         type Mutation{
-          createUser(firstName:String!, lastName:String!, email:String!, password:String!):Boolean
+          createUser(firstName:String!, lastName:String, email:String!, password:String!):Boolean
         }
 
 `
